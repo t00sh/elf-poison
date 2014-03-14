@@ -111,7 +111,7 @@ static void load_ehdr(Elf32_File *file, int fd)
   if((file->ehdr = malloc(size)) == NULL)
     SYSCALL_ERROR("[-] malloc ");
 
-  if(read(fd, file->ehdr, size) != size)
+  if(read(fd, file->ehdr, size) != (int)size)
     ERROR("Bad ELF !");
 
   if(!check_magic(file))
@@ -130,7 +130,7 @@ static void load_phdr(Elf32_File *file, int fd)
   if(lseek(fd, file->ehdr->e_phoff, SEEK_SET) < 0)
     SYSCALL_ERROR("lseek ");
 
-  if(read(fd, file->phdr, size) != size)
+  if(read(fd, file->phdr, size) != (int)size)
     ERROR("Bad ELF !");
 }
 
@@ -149,7 +149,7 @@ static void load_sections(Elf32_File *file, int fd)
       if(lseek(fd, file->ehdr->e_shoff + i*shdr_size, SEEK_SET) < 0)
 	SYSCALL_ERROR("lseek ");
 
-      if(read(fd, &file->sections[i].shdr, shdr_size) != shdr_size)
+      if(read(fd, &file->sections[i].shdr, shdr_size) != (int)shdr_size)
 	ERROR("Bad ELF !");
 
       if(file->sections[i].shdr.sh_type != SHT_NOBITS)
@@ -162,7 +162,7 @@ static void load_sections(Elf32_File *file, int fd)
 	  if(lseek(fd, file->sections[i].shdr.sh_offset, SEEK_SET) < 0)
             SYSCALL_ERROR("lseek ");
 
-	  if(read(fd, file->sections[i].data, size) != size)
+	  if(read(fd, file->sections[i].data, size) != (int)size)
             ERROR("Bad ELF !");
 	}
       else
